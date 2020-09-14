@@ -116,8 +116,9 @@ steering_channel = PulseIn(board.RCC4, maxlen=64, idle_state=0)
 
 
 # setup Control objects.  1500 pulse is off and center steering
-steering = Control("Steering", steering_pwm, steering_channel, 1500, motor_duty_cycle)
-throttle = Control("Throttle", throttle_pwm, throttle_channel, 1500, motor_duty_cycle)
+# ASSUMPTION - left motor is on steering, right motor on throttle (for code purposes)
+steering = Control("Steering", left_motor, steering_channel, 1500, motor_duty_cycle)
+throttle = Control("Throttle", right_motor, throttle_channel, 1500, motor_duty_cycle)
 
 ## Set some other variables
 SPEED_FACTOR = 1
@@ -211,12 +212,17 @@ def main():
 
         if(last_input + 10 < time.monotonic()):
             # set the servo for RC control
-            steering.duty_cycle(steering.value)
-            throttle.duty_cycle(throttle.value)
+            # TODO - add in diff code here
+            left_val = throttle.value - (1500 - steering.value)
+            right_val = throttle.value + (1500 - steering.value)
+            steering.duty_cycle(left_val)
+            throttle.duty_cycle(right_val)
         else:
             # set the servo for serial data (recieved)
-            steering.duty_cycle(steering_val)
-            throttle.duty_cycle(throttle_val)
+            left_val = throttle.value - (1500 - steering.value)
+            right_val = throttle.value + (1500 - steering.value)
+            steering.duty_cycle(left_val)
+            throttle.duty_cycle(right_val)
 
 
 # Run
