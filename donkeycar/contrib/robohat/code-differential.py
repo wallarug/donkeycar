@@ -3,8 +3,8 @@
 # Notes:
 #   This is to be run using CircuitPython 5.x
 #   Date: 15/05/2019
-#   Last Updated: 11/05/2020 (wallarug)
-
+#   Updated: 14/09/2020 (wallarug)
+#
 
 import time
 import board
