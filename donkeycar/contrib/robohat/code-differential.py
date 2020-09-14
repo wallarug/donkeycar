@@ -179,7 +179,7 @@ def main():
             # if no data, break and continue with RC control
             if(byte == None):
                 break
-            last_input = time.monotonic()
+            #last_input = time.monotonic()
 
             if (DEBUG):
                 logger.debug("Read from UART: %s" % (byte))
@@ -200,23 +200,23 @@ def main():
             throttle_val = throttle.value
             try:
                 steering_val = int(datastr[:4])
-                throttle_val = int(datastr[-4:])
+                throttle_val = int(datastr[-4:]) * SPEED_FACTOR
+                last_input = time.monotonic()
             except ValueError:
                 None
 
             data = bytearray('')
             datastr = ''
-            last_input = time.monotonic()
             logger.info("Set: steering=%i, throttle=%i" % (steering_val, throttle_val))
 
         if(last_input + 10 < time.monotonic()):
             # set the servo for RC control
-            steering.servo.duty_cycle = servo_duty_cycle(steering.value)
-            throttle.servo.duty_cycle = servo_duty_cycle(throttle.value)
+            steering.duty_cycle(steering.value)
+            throttle.duty_cycle(throttle.value)
         else:
             # set the servo for serial data (recieved)
-            steering.servo.duty_cycle = servo_duty_cycle(steering_val)
-            throttle.servo.duty_cycle = servo_duty_cycle(throttle_val)
+            steering.duty_cycle(steering_val)
+            throttle.duty_cycle(throttle_val)
 
 
 # Run
